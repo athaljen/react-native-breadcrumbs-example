@@ -9,6 +9,15 @@
     "start": "react-native start",
     "test": "jest"
   },
+  "keywords": [
+    "breadcrumbs",
+    "dynamic-routing",
+    "infinite stack",
+    "File manager",
+    "react-native",
+    "react-navigation",
+    "react-navigation-v6"
+  ],
   "dependencies": {
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",

@@ -1,4 +1,11 @@
-import {memo, useCallback, useEffect, useMemo, useRef} from 'react';
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {StackScreenProps} from '../navigation';
 import {NavigationState} from '@react-navigation/native';
@@ -7,33 +14,40 @@ import {Folders} from '../constants';
 const getRandomFolder = () =>
   Folders[Math.floor(Math.random() * Folders.length)];
 
+///main screen
+
 const Home = ({route, navigation}: StackScreenProps<'Home'>) => {
   const scrollRef = useRef<ScrollView>(null);
 
+  //scroll to end and set current screen name
+  //use UseEffect instead of useLayoutEffect to avoid flickering when scrolling to end on Android
   useEffect(() => {
     scrollRef.current?.scrollToEnd({animated: false});
+  }, []);
+
+  useLayoutEffect(() => {
     if (route.params?.name) navigation.setOptions({title: route.params?.name});
   }, [navigation, route.params?.name]);
 
+  //generate random folder name for dynamic naming
   const Name = getRandomFolder();
+  ///current navigation state
+  const NavigationData = navigation.getState();
 
-  console.log(route.params?.name);
-
-  const NavigationData = useMemo(
-    () => navigation.getState(),
-    [route, navigation],
-  );
-
+  //navigate to new screen
   const gotoNewScreen = useCallback(() => {
     navigation.push('Home', {name: Name});
   }, [Name]);
 
+  //navigate to specific screen
+  //here i used pop to navigate back to the specific screen without loosing state
   const navigateToSpecific = useCallback(
     (item: NavigationState['routes'][0]) => {
       const targetIndex = NavigationData.routes.findIndex(
         route => route.key === item.key,
       );
 
+      //if we find the target screen and it's index is less than current screen index then pop to that screen
       if (targetIndex !== -1 && targetIndex < NavigationData.index) {
         navigation.pop(NavigationData.index - targetIndex);
       }
@@ -44,7 +58,11 @@ const Home = ({route, navigation}: StackScreenProps<'Home'>) => {
   return (
     <View style={styles.App}>
       <View style={styles.crumbs}>
-        <ScrollView horizontal ref={scrollRef}>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          ref={scrollRef}>
+          {/* mapped through all the routes and displayed the name of the screen */}
           {NavigationData.routes.map((item, index) => (
             <Text
               key={index.toString()}

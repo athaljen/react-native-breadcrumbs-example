@@ -17,6 +17,8 @@ export type StackScreenProps<S extends keyof StackParamList> = {
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
+///root navigator
+
 const Root = memo(() => {
   return (
     <View style={styles.Root}>
@@ -25,7 +27,7 @@ const Root = memo(() => {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{animation: 'slide_from_right'}}
+            options={{animation: 'default', headerBackTitleVisible: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>
